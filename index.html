@@ -41,7 +41,7 @@
     }
 
     .options li {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .options button {
@@ -50,13 +50,15 @@
       font-size: 1em;
       border: none;
       border-radius: 4px;
-      background-color: #007BFF;
+      background-color: #0056b3;
+      /* Darker blue */
       color: white;
       cursor: pointer;
     }
 
     .options button:hover {
-      background-color: #0056b3;
+      background-color: #003d7a;
+      /* Even darker blue for hover */
     }
 
     h2,
@@ -86,6 +88,7 @@
   <div id="quiz-container"></div>
 
   <script>
+
     const quizData = [{
       "id": 1001,
       "question": "España es...",
@@ -3065,7 +3068,7 @@
     function createQuiz() {
       const quizContainer = document.getElementById('quiz-container');
 
-      quizData.forEach((item, index) => {
+      shuffle(quizData).forEach((item, index) => {
         const questionContainer = document.createElement('div');
         questionContainer.classList.add('question-container');
         if (index === 0) questionContainer.classList.add('active');
@@ -3090,6 +3093,24 @@
         questionContainer.appendChild(optionsList);
         quizContainer.appendChild(questionContainer);
       });
+    }
+
+    function shuffle(array) {
+      let currentIndex = array.length;
+
+      // While there remain elements to shuffle...
+      while (currentIndex != 0) {
+
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+
+      return array;
     }
 
     function checkAnswer(questionId, selected, questionContainer, item) {
