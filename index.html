@@ -1,95 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
-
-    .quiz-container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .question-container {
-      display: none;
-    }
-
-    .question-container.active {
-      display: block;
-    }
-
-    .question {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-
-    .options {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .options li {
-      margin-bottom: 15px;
-    }
-
-    .options button {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border: none;
-      border-radius: 4px;
-      background-color: #0056b3;
-      /* Darker blue */
-      color: white;
-      cursor: pointer;
-    }
-
-    .options button:hover {
-      background-color: #003d7a;
-      /* Even darker blue for hover */
-    }
-
-    h2,
-    p {
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      .quiz-container {
-        padding: 15px;
-      }
-
-      .options button {
-        font-size: 0.9em;
-        padding: 8px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .question-container {
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .question-number {
+            font-size: 1em;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 15px;
+        }
+        .options button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            background-color: #0056b3; /* Darker blue */
+            color: white;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #003d7a; /* Even darker blue for hover */
+        }
+        h2, p {
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .quiz-container {
+                padding: 15px;
+            }
+            .options button {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-  <div id="quiz-container"></div>
+<div id="quiz-container" class="quiz-container"></div>
 
-  <script>
-
-    const quizData = [{
+<script>
+     const quizData = [{
       "id": 1001,
       "question": "España es...",
       "options": {
@@ -3066,97 +3053,78 @@
     let mistakeCount = 0;
 
     function createQuiz() {
-      const quizContainer = document.getElementById('quiz-container');
+        const quizContainer = document.getElementById('quiz-container');
 
-      shuffle(quizData).forEach((item, index) => {
-        const questionContainer = document.createElement('div');
-        questionContainer.classList.add('question-container');
-        if (index === 0) questionContainer.classList.add('active');
+        quizData.forEach((item, index) => {
+            const questionContainer = document.createElement('div');
+            questionContainer.classList.add('question-container');
+            if (index === 0) questionContainer.classList.add('active');
 
-        const questionElement = document.createElement('div');
-        questionElement.classList.add('question');
-        questionElement.textContent = item.question;
-        questionContainer.appendChild(questionElement);
+            const questionNumber = document.createElement('div');
+            questionNumber.classList.add('question-number');
+            questionNumber.textContent = `${index + 1}/${quizData.length}`;
+            questionContainer.appendChild(questionNumber);
 
-        const optionsList = document.createElement('ul');
-        optionsList.classList.add('options');
+            const questionElement = document.createElement('div');
+            questionElement.classList.add('question');
+            questionElement.textContent = item.question;
+            questionContainer.appendChild(questionElement);
 
-        for (const [key, value] of Object.entries(item.options)) {
-          const optionItem = document.createElement('li');
-          const button = document.createElement('button');
-          button.textContent = value;
-          button.onclick = () => checkAnswer(item.id, key, questionContainer, item);
-          optionItem.appendChild(button);
-          optionsList.appendChild(optionItem);
-        }
+            const optionsList = document.createElement('ul');
+            optionsList.classList.add('options');
 
-        questionContainer.appendChild(optionsList);
-        quizContainer.appendChild(questionContainer);
-      });
-    }
+            for (const [key, value] of Object.entries(item.options)) {
+                const optionItem = document.createElement('li');
+                const button = document.createElement('button');
+                button.textContent = value;
+                button.onclick = () => checkAnswer(item.id, key, questionContainer, item);
+                optionItem.appendChild(button);
+                optionsList.appendChild(optionItem);
+            }
 
-    function shuffle(array) {
-      let currentIndex = array.length;
-
-      // While there remain elements to shuffle...
-      while (currentIndex != 0) {
-
-        // Pick a remaining element...
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex], array[currentIndex]];
-      }
-
-      return array;
+            questionContainer.appendChild(optionsList);
+            quizContainer.appendChild(questionContainer);
+        });
     }
 
     function checkAnswer(questionId, selected, questionContainer, item) {
-      const correct = answers[questionId];
-      if (selected === correct) {
-        questionContainer.classList.remove('active');
-        const nextQuestion = questionContainer.nextElementSibling;
-        if (nextQuestion) {
-          nextQuestion.classList.add('active');
+        const correct = answers[questionId];
+        if (selected === correct) {
+            questionContainer.classList.remove('active');
+            const nextQuestion = questionContainer.nextElementSibling;
+            if (nextQuestion) {
+                nextQuestion.classList.add('active');
+            } else {
+                showResults();
+            }
         } else {
-          showResults();
+            mistakeCount++;
+            if (!mistakes.find(mistake => mistake.id === item.id)) {
+                mistakes.push({ id: item.id, question: item.question, correct: item.options[correct] });
+            }
+            alert("Wrong answer. Try again!");
         }
-      } else {
-        mistakeCount++;
-        if (!mistakes.find(mistake => mistake.id === item.id)) {
-          mistakes.push({
-            id: item.id,
-            question: item.question,
-            correct: item.options[correct]
-          });
-        }
-        alert("Wrong answer. Try again!");
-      }
     }
 
     function showResults() {
-      const quizContainer = document.getElementById('quiz-container');
-      quizContainer.innerHTML = `<h2>You've completed the quiz!</h2>
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = `<h2>You've completed the quiz!</h2>
                                    <p>Number of mistakes: ${mistakeCount}</p>`;
-
-      if (mistakes.length > 0) {
-        const mistakesList = document.createElement('ul');
-        mistakes.forEach(mistake => {
-          const mistakeItem = document.createElement('li');
-          mistakeItem.innerHTML = `<strong>Question:</strong> ${mistake.question} <br>
+        
+        if (mistakes.length > 0) {
+            const mistakesList = document.createElement('ul');
+            mistakes.forEach(mistake => {
+                const mistakeItem = document.createElement('li');
+                mistakeItem.innerHTML = `<strong>Question:</strong> ${mistake.question} <br>
                                          <strong>Correct Answer:</strong> ${mistake.correct}`;
-          mistakesList.appendChild(mistakeItem);
-        });
-        quizContainer.appendChild(mistakesList);
-      }
+                mistakesList.appendChild(mistakeItem);
+            });
+            quizContainer.appendChild(mistakesList);
+        }
     }
 
     document.addEventListener('DOMContentLoaded', createQuiz);
-
-  </script>
+</script>
 
 </body>
-
 </html>
